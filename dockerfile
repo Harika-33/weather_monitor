@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ---------- Build Stage ----------
 FROM golang:1.24-alpine AS builder
 
@@ -18,3 +19,25 @@ COPY --from=builder /weather-monitor .
 EXPOSE 8080
 
 CMD ["./weather-monitor"]
+=======
+# ---------- Build Stage ----------
+FROM golang:1.24-alpine AS builder
+
+WORKDIR /app
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o /weather-monitor .
+
+# ---------- Run Stage ----------
+FROM alpine:3.18
+
+WORKDIR /app
+COPY --from=builder /weather-monitor .
+
+EXPOSE 8080
+
+CMD ["./weather-monitor"]
+>>>>>>> 428f5cd2f762435819e1f11314a19742522374ff
